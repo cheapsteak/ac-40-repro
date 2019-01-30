@@ -15,8 +15,18 @@ const httpLink = createHttpLink({
   credentials: 'same-origin'
 })
 
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('apollo:ac-40-repro-token');
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : ''
+    }
+  }
+})
+
 const client = new ApolloClient({
-  link: httpLink,
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache()
 })
 
