@@ -1,28 +1,45 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import gql from 'graphql-tag';
+import { Query, withApollo } from 'react-apollo';
 
 class App extends Component {
+  state = {
+    shouldShowQuery: true,
+  };
+  componentDidMount() {
+    this.props.client.resetStore();
+    setTimeout(() => {
+      console.log('calling setState');
+      // this removes the Query and triggers its fetch to be cancelled
+      this.setState({ shouldShowQuery: false }, () => {
+        console.log('setState callback');
+        this.props.client.resetStore().then('resetStore done'); // this doesn't get called
+      });
+    });
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
+      <div>
+        {this.state.shouldShowQuery && (
+          <Query
+            query={gql`
+              query NetworkQuery {
+                allUsers {
+                  id
+                  name
+                }
+              }
+            `}
           >
-            Learn React
-          </a>
-        </header>
+            {({ data, loading, error }) =>
+              JSON.stringify({ data, loading, error })
+            }
+          </Query>
+        )}
       </div>
     );
   }
 }
 
-export default App;
+export default withApollo(App);
