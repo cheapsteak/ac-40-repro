@@ -7,11 +7,11 @@ class App extends Component {
     shouldShowQuery: true,
   };
   componentDidMount() {
-    console.log('resetStore 1: start');
+    console.log('%c resetStore 1: start', 'background: #ffa;');
     this.props.client.resetStore()
       .then(() => console.log('resetStore 1: done'))
       .catch(e => {
-        console.error('resetStore 1: failed', e);
+        console.error('%c resetStore 1: failed', 'background: #ffa;', e);
       });
 
     setTimeout(() => {
@@ -19,11 +19,11 @@ class App extends Component {
       // this removes the Query from render and triggers its fetch to be cancelled
       this.setState({ shouldShowQuery: false }, () => {
         console.log('setState callback');
-        console.log('resetStore 2: start');
+        console.log('%c resetStore 2: start', 'background: #faf;');
         setTimeout(() => this.props.client
           .resetStore()
-          .then(() => console.log('resetStore 2: done'))
-          .catch(e => console.error('resetStore 2: failed', e))
+          .then(() => console.log('%c resetStore 2: done', 'background: #faf;'))
+          .catch(e => console.error('%c resetStore 2: failed', 'background: #faf;', e))
           , 1000
         );
       });
