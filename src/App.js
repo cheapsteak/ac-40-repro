@@ -6,29 +6,6 @@ class App extends Component {
   state = {
     shouldShowQuery: true,
   };
-  componentDidMount() {
-    console.log('resetStore 1: start');
-    this.props.client.resetStore()
-      .then(() => console.log('resetStore 1: done'))
-      .catch(e => {
-        console.error('resetStore 1: failed', e);
-      });
-
-    setTimeout(() => {
-      console.log('calling setState');
-      // this removes the Query from render and triggers its fetch to be cancelled
-      this.setState({ shouldShowQuery: false }, () => {
-        console.log('setState callback');
-        console.log('resetStore 2: start');
-        setTimeout(() => this.props.client
-          .resetStore()
-          .then(() => console.log('resetStore 2: done'))
-          .catch(e => console.error('resetStore 2: failed', e))
-          , 1000
-        );
-      });
-    });
-  }
 
   render() {
     return (
@@ -44,9 +21,26 @@ class App extends Component {
               }
             `}
           >
-            {({ data, loading, error }) =>
-              JSON.stringify({ data, loading, error })
-            }
+            {() => (
+              <button
+                onClick={() => {
+                  console.log('resetStore 1: start');
+                  this.props.client
+                    .resetStore()
+                    .then(() => console.log('resetStore 1: done'))
+                    .catch(e => {
+                      console.error('resetStore 1: failed', e);
+                    });
+                  console.log('calling setState');
+                  // this removes the Query from render and triggers its fetch to be cancelled
+                  this.setState({ shouldShowQuery: false }, () => {
+                    console.log('setState callback');
+                  });
+                }}
+              >
+                RESET
+              </button>
+            )}
           </Query>
         )}
       </div>
