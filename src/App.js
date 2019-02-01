@@ -36,9 +36,8 @@ class App extends Component {
         {this.state.shouldShowQuery && (
           <Query
             query={gql`
-              query NetworkQuery {
-                allUsers {
-                  id
+              query Query {
+                countries {
                   name
                 }
               }
