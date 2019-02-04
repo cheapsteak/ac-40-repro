@@ -6,46 +6,46 @@ class App extends Component {
   state = {
     shouldShowQuery: true,
   };
-  componentDidMount() {
-    console.log('%c resetStore 1: start', 'background: #ffa;');
-    this.props.client.resetStore()
-      .then(() => console.log('resetStore 1: done'))
-      .catch(e => {
-        console.error('%c resetStore 1: failed', 'background: #ffa;', e);
-      });
-
-    setTimeout(() => {
-      console.log('calling setState');
-      // this removes the Query from render and triggers its fetch to be cancelled
-      this.setState({ shouldShowQuery: false }, () => {
-        console.log('setState callback');
-        console.log('%c resetStore 2: start', 'background: #faf;');
-        setTimeout(() => this.props.client
-          .resetStore()
-          .then(() => console.log('%c resetStore 2: done', 'background: #faf;'))
-          .catch(e => console.error('%c resetStore 2: failed', 'background: #faf;', e))
-          , 1000
-        );
-      });
-    });
-  }
 
   render() {
     return (
       <div>
+        {this.state.shouldShowQuery ? (
+          <button
+            onClick={() => {
+              this.props.client
+                .clearStore()
+                .then(() => console.log('  clearStore 1: done'))
+                .catch(e => {
+                  console.error('   clearStore 1: failed', e);
+                });
+              this.setState({ shouldShowQuery: false });
+            }}
+            style={{ padding: 40 }}
+          >
+            reset store and stop query
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              this.setState({ shouldShowQuery: true });
+            }}
+            style={{ padding: 40 }}
+          >
+            start query
+          </button>
+        )}
         {this.state.shouldShowQuery && (
           <Query
             query={gql`
               query Query {
-                countries {
-                  name
-                }
+                hello
               }
             `}
           >
-            {({ data, loading, error }) =>
-              JSON.stringify({ data, loading, error })
-            }
+            {({ data, loading, error }) => (
+              <pre>{JSON.stringify({ data, loading, error }, null, '  ')}</pre>
+            )}
           </Query>
         )}
       </div>
